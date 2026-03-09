@@ -34,9 +34,9 @@
   <Project Path="Oculus.VR.Scripts.Editor.csproj" />
   <Project Path="Unity.VisualStudio.Editor.csproj" />
   <Project Path="Unity.InputSystem.csproj" />
-  <Project Path="PPv2URPConverters.csproj" />
   <Project Path="meta.xr.mrutilitykit.editor.csproj" />
   <Project Path="Meta.XR.ImmersiveDebugger.csproj" />
+  <Project Path="PPv2URPConverters.csproj" />
   <Project Path="Unity.XR.CoreUtils.csproj" />
   <Project Path="Meta.WitAi.Editor.csproj" />
   <Project Path="VoiceSDK.Telemetry.csproj" />
@@ -128,8 +128,8 @@
   <Project Path="Meta.XR.EnvironmentDepth.Editor.csproj" />
   <Project Path="Oculus.Interaction.Samples.Editor.UISet.csproj" />
   <Project Path="Oculus.Haptics.csproj" />
-  <Project Path="Meta.XR.Guides.Editor.csproj" />
   <Project Path="Meta.VoiceSDK.Mic.Other.csproj" />
+  <Project Path="Meta.XR.Guides.Editor.csproj" />
   <Project Path="Meta.Voice.Hub.Runtime.csproj" />
   <Project Path="Unity.XR.OpenXR.Features.MetaQuestSupport.csproj" />
   <Project Path="Meta.XR.ImmersiveDebugger.Interface.csproj" />
