@@ -38,9 +38,9 @@ public class LaserShooter : MonoBehaviour
             GameObject impact = Instantiate(
                 impactEffect,
                 hit.point,
-                Quaternion.LookRotation(hit.normal)
+                Quaternion.LookRotation(-hit.normal)
             );
-            Destroy(impact, 1f);
+            Destroy(impact, 0.5f);
         }
 
         // Instanciamos el láser como hijo del arma
