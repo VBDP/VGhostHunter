@@ -11,6 +11,9 @@ public class LaserShooter : MonoBehaviour
     public float laserSpeed = 200f;
     public float fadeTime = 0.25f;
 
+    public AudioSource laserAudioSource; // AudioSource en el arma
+    public AudioClip laserClip;          // Clip del láser
+
     void Update()
     {
         if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch))
@@ -46,10 +49,15 @@ public class LaserShooter : MonoBehaviour
         laserInstance.transform.localRotation = Quaternion.identity;
 
         LineRenderer line = laserInstance.GetComponent<LineRenderer>();
-        line.useWorldSpace = false; // <-- Muy importante
+        line.useWorldSpace = false;
 
-        // Convertimos el punto final a local del arma
         Vector3 localEndPoint = laserOrigin.InverseTransformPoint(endPoint);
+
+        // Reproducir sonido
+        if (laserAudioSource != null && laserClip != null)
+        {
+            laserAudioSource.PlayOneShot(laserClip);
+        }
 
         StartCoroutine(AnimateLaser(line, Vector3.zero, localEndPoint, laserInstance));
     }
