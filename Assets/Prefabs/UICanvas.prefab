@@ -817,7 +817,7 @@ MonoBehaviour:
   spawnTime: 3
   prefabToSpawn: {fileID: 19588385245968726, guid: 8ee08d04ad5df46fbb2e97260b63420b, type: 3}
   minEdgeDistance: 0.5
-  spawnLabels: 4
+  spawnLabels: 103
   normalOffset: 0.25
   fantasmas: 0
   matado: 0

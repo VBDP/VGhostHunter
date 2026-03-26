@@ -3,29 +3,29 @@ using System.Collections;
 
 public class LaserShooter : MonoBehaviour
 {
+    [Header("References")]
     public Transform laserOrigin;
     public GameObject laserPrefab;
     public GameObject impactEffect;
+    public GhostSpawner ghostSpawner; // Asignar en Inspector opcionalmente
 
+    [Header("Laser Settings")]
     public float maxDistance = 60f;
     public float laserSpeed = 200f;
     public float fadeTime = 0.25f;
 
+    [Header("Audio")]
     public AudioSource laserAudioSource;
     public AudioClip laserClip;
-    private GhostSpawner ghostSpawner;
 
     void Start()
     {
-        ghostSpawner = FindFirstObjectByType<GhostSpawner>();
+        if (ghostSpawner == null)
+            ghostSpawner = FindFirstObjectByType<GhostSpawner>();
     }
+
     void Update()
     {
-        if(ghostSpawner == null)
-        {
-           ghostSpawner = FindFirstObjectByType<GhostSpawner>(); 
-        }
-        
         if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch))
         {
             ShootLaser();
@@ -34,16 +34,16 @@ public class LaserShooter : MonoBehaviour
 
     void ShootLaser()
     {
+        if (laserOrigin == null || laserPrefab == null) return;
+
         Vector3 origin = laserOrigin.position;
         Vector3 direction = laserOrigin.forward;
         Vector3 endPoint = origin + direction * maxDistance;
 
-        // Raycast desde el mundo
         if (Physics.Raycast(origin, direction, out RaycastHit hit, maxDistance))
         {
             endPoint = hit.point;
 
-            // Efecto de impacto
             if (impactEffect != null)
             {
                 GameObject impact = Instantiate(
@@ -54,32 +54,40 @@ public class LaserShooter : MonoBehaviour
                 Destroy(impact, 0.5f);
             }
 
-            // Destruir enemigo si tiene tag "Enemy"
-            if (hit.collider.CompareTag("Enemy"))
+            Ghost hitGhost = hit.collider.GetComponent<Ghost>();
+            if (hitGhost != null)
             {
-                Destroy(hit.collider.gameObject);
-                ghostSpawner.RestarFantasma();
+                hitGhost.Kill();
+
+                if (ghostSpawner != null)
+                    ghostSpawner.RestarFantasma();
             }
         }
 
-        // Instanciamos el láser
-        GameObject laserInstance = Instantiate(laserPrefab, laserOrigin);
-        laserInstance.transform.localPosition = Vector3.zero;
-        laserInstance.transform.localRotation = Quaternion.identity;
-
-        LineRenderer line = laserInstance.GetComponent<LineRenderer>();
-        line.useWorldSpace = true; // Ojo: usar espacio mundial para que el raycast coincida con el LineRenderer
+        // Crear láser visual
+        GameObject laserInstance = Instantiate(laserPrefab);
+        if (laserInstance != null)
+        {
+            LineRenderer line = laserInstance.GetComponent<LineRenderer>();
+            if (line != null)
+            {
+                line.useWorldSpace = true;
+                StartCoroutine(AnimateLaser(line, origin, endPoint, laserInstance));
+            }
+            else
+            {
+                Destroy(laserInstance);
+            }
+        }
 
         // Reproducir sonido
         if (laserAudioSource != null && laserClip != null)
         {
             laserAudioSource.PlayOneShot(laserClip);
         }
-
-        StartCoroutine(AnimateLaser(line, origin, endPoint, laserInstance));
     }
 
-    IEnumerator AnimateLaser(LineRenderer line, Vector3 worldOrigin, Vector3 worldEndPoint, GameObject laserObj)
+    private IEnumerator AnimateLaser(LineRenderer line, Vector3 worldOrigin, Vector3 worldEndPoint, GameObject laserObj)
     {
         float distance = Vector3.Distance(worldOrigin, worldEndPoint);
         float currentDistance = 0;
