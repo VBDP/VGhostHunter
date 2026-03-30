@@ -20,8 +20,26 @@ public class LaserShooter : MonoBehaviour
 
     void Start()
     {
+        // Si no se asignó en el inspector, lo buscamos en la escena
         if (ghostSpawner == null)
-            ghostSpawner = FindFirstObjectByType<GhostSpawner>();
+        {
+            ghostSpawner = Object.FindFirstObjectByType<GhostSpawner>();
+            
+            // Si después de buscar sigue siendo null, usamos el método antiguo por si acaso
+            if (ghostSpawner == null)
+            {
+                ghostSpawner = GameObject.FindObjectOfType<GhostSpawner>();
+            }
+        }
+
+        if (ghostSpawner != null)
+        {
+            Debug.Log("GhostSpawner successfully linked to LaserShooter!");
+        }
+        else
+        {
+            Debug.LogError("GhostSpawner NOT found! Please add it to the scene or the LaserShooter inspector.");
+        }
     }
 
     void Update()
@@ -54,13 +72,25 @@ public class LaserShooter : MonoBehaviour
                 Destroy(impact, 0.5f);
             }
 
-            Ghost hitGhost = hit.collider.GetComponent<Ghost>();
+            Ghost hitGhost = hit.collider.GetComponentInParent<Ghost>();
             if (hitGhost != null)
             {
+                Debug.Log("Ghost Hit! Calling Kill.");
                 hitGhost.Kill();
 
                 if (ghostSpawner != null)
+                {
+                    Debug.Log("GhostSpawner found! Calling RestarFantasma.");
                     ghostSpawner.RestarFantasma();
+                }
+                else
+                {
+                    Debug.LogWarning("GhostSpawner NOT found in LaserShooter!");
+                }
+            }
+            else
+            {
+                Debug.Log("Hit something that is not a Ghost: " + hit.collider.name);
             }
         }
 

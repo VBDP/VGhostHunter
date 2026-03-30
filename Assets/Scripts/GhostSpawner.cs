@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class GhostSpawner : MonoBehaviour
 {
- public float spawnTime = 1;
+    public float spawnTime = 3f;
     public GameObject prefabToSpawn;
     public float minEdgeDistance = 1f;
     public MRUKAnchor.SceneLabels spawnLabels;
     public float normalOffset;
+    public int maxGhosts = 30;
 
     private float timer = 0;
     public int fantasmas;
@@ -22,20 +23,21 @@ public class GhostSpawner : MonoBehaviour
     {
         fantasmas = 0;
         matado = 0;
-        
-        fantasmasRestantesTexto.text = fantasmas.ToString();
-        fantasmasAsesinadosTexto.text = matado.ToString();
+    
+        fantasmasRestantesTexto.text = "Fantasmas Restantes: " + fantasmas.ToString();
+        fantasmasAsesinadosTexto.text = "Fantasmas Matados: " + matado.ToString();
     }
 
     // Update is called once per frame
  void Update()
     {
         timer += Time.deltaTime;
-        if (timer >= spawnTime)
+        if (timer >= spawnTime && fantasmas < maxGhosts)
         {
             timer = 0;
             SpawnGhost();
-            fantasmasRestantesTexto.text = fantasmas.ToString();
+            fantasmasRestantesTexto.text = "Fantasmas Restantes: " + fantasmas.ToString();
+            fantasmasAsesinadosTexto.text = "Fantasmas Matados: " + matado.ToString();
         }
 
                     // Mira hacia la cámara
@@ -56,14 +58,23 @@ public class GhostSpawner : MonoBehaviour
             randomPositionNormalOffset.y = 0;
             Instantiate(prefabToSpawn, randomPositionNormalOffset, Quaternion.identity);
             fantasmas += 1;
+            fantasmasRestantesTexto.text = "Fantasmas Restantes: " + fantasmas.ToString();
         }
     }
 
     public void RestarFantasma()
     {
+        Debug.Log("Resting ghost! Current: " + fantasmas + ", Matados: " + matado);
         fantasmas -= 1;
-        fantasmasRestantesTexto.text = fantasmas.ToString();
+        if (fantasmas < 0) fantasmas = 0;
+
+        if (fantasmasRestantesTexto != null){
+            fantasmasRestantesTexto.text = "Fantasmas Restantes: " + fantasmas.ToString();
+        }
+
         matado += 1;
-        fantasmasAsesinadosTexto.text = matado.ToString();
+        if (fantasmasAsesinadosTexto != null){
+            fantasmasAsesinadosTexto.text = "Fantasmas Matados: " + matado.ToString();
+        }
     }
 }
